@@ -1,26 +1,49 @@
 ---
-title: "STATS331Final"
-format: html
+title: "STATS331Final Q"
+subtitle: "Checkpoint3 Choosing data"
+format: 
+  html:
+    embed-resources: true
+    code-tools: true
+    toc: true
+    number-sections: true
 editor: visual
+execute: 
+  error: true
+  echo: true
+  message: false
+  warning: false
 ---
-
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
+```{r setup}
+#| include: false
+library(tidyverse)
 ```
 
-You can add options to executable code like this
+
+## Dataset 
 
 ```{r}
-#| echo: false
-2 * 2
+Soldierdata <- read.csv("armed_forces_personnel_percent_of_labor_force.csv")
+Murderdata <- read.csv("murder_per_100000_people.csv")
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+## Cleaning Data
+
+```{r}
+colnames(Soldierdata) <- gsub("^X", "", colnames(Soldierdata))
+colnames(Murderdata) <- gsub("^X", "", colnames(Murderdata))
+
+Soldierdata$country <- str_trim(Soldierdata$country)
+Murderdata$country <- str_trim(Murderdata$country)
+
+Soldierdata[is.na(Soldierdata)] <- 0
+Murderdata[is.na(Murderdata)] <- 0
+
+Soldierdata_long <- pivot_longer(Soldierdata, cols = -country, names_to = "year", values_to = "soldiers")
+Murderdata_long <- pivot_longer(Murderdata, cols = -country, names_to = "year", values_to = "murder_rate")
+
+FinalData <- full_join(Soldierdata_long, Murderdata_long, by = c("country", "year"))
+
+FinalData
+```
+
