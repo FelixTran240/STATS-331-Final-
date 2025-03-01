@@ -14,13 +14,15 @@ execute:
   message: false
   warning: false
 ---
+
 ```{r setup}
 #| include: false
 library(tidyverse)
 ```
 
+## Dataset
 
-## Dataset 
+For this project, we are working with two datasets, murders/100k people and armed forces personnel as a percent of the labor force. Both of these datasets give their respective variable per country and in every available year, which ranges from 1950 to 2020. The murder data is sourced from the Global Burden of Disease Study 2017 (<https://ghdx.healthdata.org/gbd-2017>) and the armed forces data is sourced from the International Institute for Strategic Studies.
 
 ```{r}
 Soldierdata <- read.csv("armed_forces_personnel_percent_of_labor_force.csv")
@@ -46,4 +48,3 @@ FinalData <- full_join(Soldierdata_long, Murderdata_long, by = c("country", "yea
 
 FinalData
 ```
-
