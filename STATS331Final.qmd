@@ -50,7 +50,6 @@ FinalData <- full_join(Soldierdata_long, Murderdata_long, by = c("country", "yea
 FinalData
 ```
 
-
 ## Linear Regression
 
 ```{r}
@@ -64,8 +63,27 @@ ggplot(FinalData, aes(x = soldiers, y = murder_rate)) +
 
 ```
 
+```{r}
+summary_data_year <- FinalData |>
+  group_by(year) |>
+  summarize(
+    avg_soldiers = mean(soldiers, na.rm = TRUE),
+    avg_murder_rate = mean(murder_rate, na.rm = TRUE))
 
-```{r} 
+ggplot(summary_data_year, aes(x = as.numeric(year))) +
+  geom_line(aes(y = avg_murder_rate, color = "Murder Rate"), size = 1) +
+  geom_line(aes(y = avg_soldiers * 2, color = "Military Personnel (Scaled)"), size = 1, linetype = "dashed") +
+  scale_y_continuous(name = "Murder Rate (per 100,000 people)",
+                     sec.axis = sec_axis(~./2, name = "Military Personnel (% of Labor Force)")) +
+  labs(title = "Trends in Murder Rate and Military Personnel Over Time",
+       x = "Year") +
+  scale_color_manual(values = c("Murder Rate" = "red", "Military Personnel (Scaled)" = "blue")) +
+  theme_bw()
+
+```
+
+
+```{r}
 summary_data <- FinalData |>
   group_by(country) |>
   summarize(
@@ -77,7 +95,6 @@ model <- lm(avg_murder_rate ~ avg_soldiers, data = summary_data)
 summary(model)
 coefficients(model)
 ```
-
 
 ```{r}
 fitted_values <- fitted(model)
@@ -101,4 +118,3 @@ data.frame(
 r_squared <- variance_fitted / variance_response
 r_squared
 ```
-
