@@ -1,6 +1,6 @@
 ---
 title: "STATS331Final Q"
-subtitle: "Checkpoint3 Choosing data"
+subtitle: "Checkpoint4 Linear Regression"
 format: 
   html:
     embed-resources: true
@@ -18,6 +18,7 @@ execute:
 ```{r setup}
 #| include: false
 library(tidyverse)
+library(ggplot2)
 ```
 
 ## Dataset
@@ -48,3 +49,56 @@ FinalData <- full_join(Soldierdata_long, Murderdata_long, by = c("country", "yea
 
 FinalData
 ```
+
+
+## Linear Regression
+
+```{r}
+ggplot(FinalData, aes(x = soldiers, y = murder_rate)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Military Personnel vs. Murder Rate",
+       x = "Military Personnel (% of Labor Force)",
+       y = "Murder Rate (per 100,000 people)")
+
+
+```
+
+
+```{r} 
+summary_data <- FinalData |>
+  group_by(country) |>
+  summarize(
+    avg_soldiers = mean(soldiers, na.rm = TRUE),
+    avg_murder_rate = mean(murder_rate, na.rm = TRUE)
+  )
+
+model <- lm(avg_murder_rate ~ avg_soldiers, data = summary_data)
+summary(model)
+coefficients(model)
+```
+
+
+```{r}
+fitted_values <- fitted(model)
+residuals <- resid(model)
+
+variance_response <- var(summary_data$avg_murder_rate, na.rm = TRUE)
+variance_fitted <- var(fitted_values, na.rm = TRUE)
+variance_residuals <- var(residuals, na.rm = TRUE)
+
+library(knitr)
+library(kableExtra)
+
+data.frame(
+  "Variance in Response" = variance_response,
+  "Variance in Fitted" = variance_fitted,
+  "Variance in Residuals" = variance_residuals
+) |>
+  kable() |>
+  kable_styling(full_width = FALSE)
+
+r_squared <- variance_fitted / variance_response
+r_squared
+```
+
