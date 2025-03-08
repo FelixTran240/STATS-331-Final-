@@ -63,6 +63,12 @@ ggplot(FinalData, aes(x = soldiers, y = murder_rate)) +
 
 ```
 
+As seen on the scatter plot, the distribution is focused towards the **bottom left** of the graph **(under x = 10 and y = 25)**. This indicates that most countries have a relatively **small percentage of military** personnel in their labor force. However, among those countries, there is a wide variation in murder rates, with some exceeding **25 per 100,000 people**.
+
+A key pattern observed in this **regression analysis** is the **inverse relationship** between military personnel percentage and the murder rate. Countries with a **higher percentage of military personnel** tend to have **lower or negligible murder rates**. Conversely, those with **higher murder rates** generally have a **smaller percentage of military personnel** in their labor force.
+
+Overall, the data shows a **strong skew** to the right, where **high murder rates** are concentrated in regions with a **low percentage of military personnel**, while **lower murder rates** are observed in countries with a **higher proportion of military personnel**.
+
 ```{r}
 summary_data_year <- FinalData |>
   group_by(year) |>
@@ -82,6 +88,13 @@ ggplot(summary_data_year, aes(x = as.numeric(year))) +
 
 ```
 
+## Summary(Linear Model)
+
+This graph presents the murder rate per 100,000 people from 1950 to 2020 on a global scale, shown by the *red line*. Alongside it, the *blue dashed line* represents the **percentage of military personnel** within the labor force over the same period. The **x-axis marks** the years, while the left **y-axis** corresponds to the **murder rate**, and the right y-axis corresponds to the **percentage of military personnel**. This visualization displays how both variables have changed over time.
+
+## Analysis(Linear Model)
+
+The graph shows that the **murder rate** increased significantly between **1980 and 1995**, reaching its peak before steadily declining. The **percentage of military personnel within the labor force**, represented by the **blue dashed line**, also experienced a rise around the same period before gradually decreasing. This **overlapping trend** suggests a possible relationship between the two variables, though further analysis would be required to determine the nature of the connection. While the murder rate began to fall after its peak in the mid-1990s, the percentage of military personnel also saw a decline, indicating that both variables may have been influenced by broader socio-political or economic factors during this time.
 
 ```{r}
 summary_data <- FinalData |>
@@ -118,3 +131,7 @@ data.frame(
 r_squared <- variance_fitted / variance_response
 r_squared
 ```
+
+The R-squared value or the fitted variance divided by the response of variance is 0.0324. This shows that only 3.24% of the variation in murder rates is explained by the percentage of armed forces personnel in the labor force. This very low value suggests that military employment has little to no meaningful impact on murder rates, at least alone in the regression model. Most of the variability, 96.76%, is due to other factors that are not included in the model. Because crime rates are typically influenced by a mix of socioeconomic, demographic, and policy-related variables, relying on military employment as a predictor is unlikely to provide a strong explanatory factor.
+
+To improve the model, we would need to add additional predictors that are more directly linked to crime rates. Factors such as unemployment, poverty levels, education, and law enforcement policies could offer greater variance into the drivers of violent crime. Given the weak variance of the current model, a broader approach that includes multiple predictors would likely provide a more accurate and comprehensive understanding of what influences murder rates.
