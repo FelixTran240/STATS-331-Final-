@@ -20,6 +20,7 @@ execute:
 #| include: false
 library(tidyverse)
 library(ggplot2)
+set.seed(1)
 ```
 
 ## Dataset
@@ -138,3 +139,32 @@ r_squared
 The R-squared value or the fitted variance divided by the response of variance is 0.0324. This shows that only 3.24% of the variation in murder rates is explained by the percentage of armed forces personnel in the labor force. This very low value suggests that military employment has little to no meaningful impact on murder rates, at least alone in the regression model. Most of the variability, 96.76%, is due to other factors that are not included in the model. Because crime rates are typically influenced by a mix of socioeconomic, demographic, and policy-related variables, relying on military employment as a predictor is unlikely to provide a strong explanatory factor.
 
 To improve the model, we would need to add additional predictors that are more directly linked to crime rates. Factors such as unemployment, poverty levels, education, and law enforcement policies could offer greater variance into the drivers of violent crime. Given the weak variance of the current model, a broader approach that includes multiple predictors would likely provide a more accurate and comprehensive understanding of what influences murder rates.
+
+
+
+
+Simulatiion 
+```{r}
+
+predictions <- predict(model)
+residual_sd <- sigma(model)
+
+simulated_data <- data.frame(
+  avg_soldiers = summary_data$avg_soldiers,
+  simulated_murder_rate = pmax(predictions + rnorm(length(predictions), mean = 0, sd = residual_sd), 0)
+
+)
+
+ggplot() +
+  geom_point(data = summary_data, aes(x = avg_soldiers, y = avg_murder_rate), color = "blue", alpha = 0.5) +
+  geom_point(data = simulated_data, aes(x = avg_soldiers, y = simulated_murder_rate), color = "red", alpha = 0.5) +
+  labs(title = "Observed vs. Simulated Data",
+       x = "Military Personnel (% of Labor Force)",
+       y = "Murder Rate (per 100,000 people)",
+       color = "Dataset") +
+  scale_color_manual(values = c("Observed" = "blue", "Simulated" = "red")) +
+  theme_minimal()
+
+
+```
+
