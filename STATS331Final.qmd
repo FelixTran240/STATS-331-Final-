@@ -140,10 +140,8 @@ The R-squared value or the fitted variance divided by the response of variance i
 
 To improve the model, we would need to add additional predictors that are more directly linked to crime rates. Factors such as unemployment, poverty levels, education, and law enforcement policies could offer greater variance into the drivers of violent crime. Given the weak variance of the current model, a broader approach that includes multiple predictors would likely provide a more accurate and comprehensive understanding of what influences murder rates.
 
+Simulation
 
-
-
-Simulatiion 
 ```{r}
 
 predictions <- predict(model)
@@ -154,6 +152,19 @@ simulated_data <- data.frame(
   simulated_murder_rate = pmax(predictions + rnorm(length(predictions), mean = 0, sd = residual_sd), 0)
 
 )
+
+Thousand_Simulated <- map_dfr(
+  .x = 1:1000,
+  .f = function(i) {
+    data.frame(
+      avg_soldiers = summary_data$avg_soldiers, 
+      simulated_murder_rate = pmax(predictions + rnorm(length(predictions), mean = 0, sd = residual_sd), 0)
+    )
+  }
+)
+
+
+
 
 ggplot() +
   geom_point(data = summary_data, aes(x = avg_soldiers, y = avg_murder_rate), color = "blue", alpha = 0.5) +
@@ -167,4 +178,3 @@ ggplot() +
 
 
 ```
-
