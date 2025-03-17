@@ -46,7 +46,9 @@ Murderdata[is.na(Murderdata)] <- 0
 Soldierdata_long <- pivot_longer(Soldierdata, cols = -country, names_to = "year", values_to = "soldiers")
 Murderdata_long <- pivot_longer(Murderdata, cols = -country, names_to = "year", values_to = "murder_rate")
 
-FinalData <- full_join(Soldierdata_long, Murderdata_long, by = c("country", "year"))
+FinalData <- inner_join(Soldierdata_long, Murderdata_long, by = c("country", "year"))
+
+
 
 FinalData
 ```
