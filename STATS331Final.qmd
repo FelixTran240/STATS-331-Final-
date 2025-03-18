@@ -178,3 +178,33 @@ ggplot() +
 
 
 ```
+
+```{r}
+#adding an id so we can run regression on specific simulations
+Thousand_Simulated_id <- Thousand_Simulated |>
+  mutate(simulation_id = (row_number() - 1) %/% 96 + 1)
+
+# regression x 1000
+r_squared_values <- map_dbl(1:1000, function(i) {
+  simulated_subset <- Thousand_Simulated_id |>
+    filter(simulation_id == i)  
+
+  merged_data <- inner_join(summary_data, simulated_subset, by = "avg_soldiers")
+
+  sub_model <- lm(avg_murder_rate ~ simulated_murder_rate, data = merged_data)
+
+  summary(sub_model)$r.squared
+})
+
+```
+
+```{r}
+r_squared_data <- data.frame(r_squared_values = r_squared_values)
+
+ggplot(r_squared_data, aes(x = r_squared_values)) +
+  geom_histogram(binwidth = 0.005, fill = "darkred", alpha = 0.5, color = "black") +
+  labs(title = "Simulated R^2",
+       x = "R^2",
+       y = "Frequency") +
+  theme_bw()
+```
