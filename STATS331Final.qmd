@@ -124,6 +124,14 @@ summary(model)
 coefficients(model)
 ```
 
+In table above is the summary statistics for our regression model. We use a linear regression to compare the effects military personal has on murder rate. We use the same transformation as used in the scatter plot above with applying a log transformation to the y variable of murder rate. From this table we get the parameter estimates and the R-squared value.
+
+Linear Model: \$ \\hat{\\text{Murder Rate}} = 1.0924 - 0.1101 \\times \\text{Military Personnel} \$
+
+Intercept :When military personnel is 0%, the predicted murder rate is 1.0924 per 100,000 people.
+
+Slope: For every 1% increase in military personnel as a share of the labor force, the murder rate is predicted to decrease by 0.1101 per 100,000 people
+
 ```{r}
 fitted_values <- fitted(model)
 residuals <- resid(model)
