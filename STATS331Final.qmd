@@ -35,8 +35,8 @@ Murderdata <- read.csv("murder_per_100000_people.csv")
 ## Cleaning Data
 
 ```{r}
-colnames(Soldierdata) <- gsub("^X", "", colnames(Soldierdata))
-colnames(Murderdata) <- gsub("^X", "", colnames(Murderdata))
+colnames(Soldierdata) <- str_replace(colnames(Soldierdata), "^X", "")
+colnames(Murderdata) <- str_replace(colnames(Murderdata), "^X", "")
 
 Soldierdata$country <- str_trim(Soldierdata$country)
 Murderdata$country <- str_trim(Murderdata$country)
@@ -47,23 +47,33 @@ Murderdata[is.na(Murderdata)] <- 0
 Soldierdata_long <- pivot_longer(Soldierdata, cols = -country, names_to = "year", values_to = "soldiers")
 Murderdata_long <- pivot_longer(Murderdata, cols = -country, names_to = "year", values_to = "murder_rate")
 
-FinalData <- inner_join(Soldierdata_long, Murderdata_long, by = c("country", "year"))
+FinalData <- inner_join(Soldierdata_long, Murderdata_long, by = c("country", "year")) |>
+  filter(soldiers != 0,
+         murder_rate != 0)
 
 
 
-FinalData
+FinalData |>
+  slice_head(n = 5)
 ```
 
 ## Linear Regression
 
 ```{r}
-ggplot(FinalData, aes(x = soldiers, y = murder_rate)) +
+summary_data <- FinalData |>
+  group_by(country) |>
+  summarize(
+    avg_soldiers = mean(soldiers, na.rm = TRUE),
+    avg_murder_rate = mean(murder_rate, na.rm = TRUE)) 
+
+
+
+ggplot(data = summary_data, aes(x = avg_soldiers, y = log(avg_murder_rate))) +
   geom_point(alpha = 0.5) +
   geom_smooth(method = "lm", se = FALSE, color = "red") +
   labs(title = "Military Personnel vs. Murder Rate",
        x = "Military Personnel (% of Labor Force)",
        y = "Murder Rate (per 100,000 people)")
-
 
 ```
 
@@ -94,21 +104,14 @@ ggplot(summary_data_year, aes(x = as.numeric(year))) +
 
 ## Summary(Linear Model)
 
-This graph presents the murder rate per 100,000 people from 1950 to 2020 on a global scale, shown by the *red line*. Alongside it, the *blue dashed line* represents the **percentage of military personnel** within the labor force over the same period. The **x-axis marks** the years, while the left **y-axis** corresponds to the **murder rate**, and the right y-axis corresponds to the **percentage of military personnel**. This visualization displays how both variables have changed over time.
+This graph presents the murder rate per 100,000 people from 1990 to 2016 on a global scale, shown by the *red line*. Alongside it, the *blue dashed line* represents the **percentage of military personnel** within the labor force over the same period. The **x-axis marks** the years, while the left **y-axis** corresponds to the **murder rate**, and the right y-axis corresponds to the **percentage of military personnel**. This visualization displays how both variables have changed over time.
 
 ## Analysis(Linear Model)
 
-The graph shows that the **murder rate** increased significantly between **1980 and 1995**, reaching its peak before steadily declining. The **percentage of military personnel within the labor force**, represented by the **blue dashed line**, also experienced a rise around the same period before gradually decreasing. This **overlapping trend** suggests a possible relationship between the two variables, though further analysis would be required to determine the nature of the connection. While the murder rate began to fall after its peak in the mid-1990s, the percentage of military personnel also saw a decline, indicating that both variables may have been influenced by broader socio-political or economic factors during this time.
+The graph shows that the **murder rate** increased significantly between **1990 and 1995**, reaching its peak before steadily declining. The **percentage of military personnel within the labor force**, represented by the **blue dashed line**, also experienced a rise around the same period before gradually decreasing. This **overlapping trend** suggests a possible relationship between the two variables, though further analysis would be required to determine the nature of the connection. While the murder rate began to fall after its peak in the mid-1990s, the percentage of military personnel also saw a decline, indicating that both variables may have been influenced by broader socio-political or economic factors during this time.
 
 ```{r}
-summary_data <- FinalData |>
-  group_by(country) |>
-  summarize(
-    avg_soldiers = mean(soldiers, na.rm = TRUE),
-    avg_murder_rate = mean(murder_rate, na.rm = TRUE)
-  )
-
-model <- lm(avg_murder_rate ~ avg_soldiers, data = summary_data)
+model <- lm(log(avg_murder_rate) ~ avg_soldiers, data = summary_data)
 summary(model)
 coefficients(model)
 ```
@@ -167,8 +170,8 @@ Thousand_Simulated <- map_dfr(
 
 
 ggplot() +
-  geom_point(data = summary_data, aes(x = avg_soldiers, y = avg_murder_rate), color = "blue", alpha = 0.5) +
-  geom_point(data = simulated_data, aes(x = avg_soldiers, y = simulated_murder_rate), color = "red", alpha = 0.5) +
+  geom_point(data = summary_data, aes(x = avg_soldiers, y = log(avg_murder_rate)), color = "blue", alpha = 0.5) +
+  geom_point(data = simulated_data, aes(x = avg_soldiers, y = log(simulated_murder_rate)), color = "red", alpha = 0.5) +
   labs(title = "Observed vs. Simulated Data",
        x = "Military Personnel (% of Labor Force)",
        y = "Murder Rate (per 100,000 people)",
@@ -182,7 +185,7 @@ ggplot() +
 ```{r}
 #adding an id so we can run regression on specific simulations
 Thousand_Simulated_id <- Thousand_Simulated |>
-  mutate(simulation_id = (row_number() - 1) %/% 96 + 1)
+  mutate(simulation_id = (row_number() - 1) %/% 85 + 1)
 
 # regression x 1000
 r_squared_values <- map_dbl(1:1000, function(i) {
@@ -191,7 +194,7 @@ r_squared_values <- map_dbl(1:1000, function(i) {
 
   merged_data <- inner_join(summary_data, simulated_subset, by = "avg_soldiers")
 
-  sub_model <- lm(avg_murder_rate ~ simulated_murder_rate, data = merged_data)
+  sub_model <- lm(log(avg_murder_rate) ~ simulated_murder_rate, data = merged_data)
 
   summary(sub_model)$r.squared
 })
