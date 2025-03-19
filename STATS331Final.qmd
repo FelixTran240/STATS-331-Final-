@@ -1,6 +1,7 @@
 ---
 title: "STATS331Final Q"
-subtitle: "Checkpoint4 Linear Regression"
+subtitle: "Final Project"
+author: "Ricky Murillo, Felix tran, Nathan Madlansacay, Jacob Hinshaw"
 format: 
   html:
     embed-resources: true
@@ -32,6 +33,10 @@ Soldierdata <- read.csv("armed_forces_personnel_percent_of_labor_force.csv")
 Murderdata <- read.csv("murder_per_100000_people.csv")
 ```
 
+### Hypothesis
+
+We expect a negative relationship, where countries with more military personnel tend to have lower murder rates due to stronger security and law enforcement.
+
 ## Cleaning Data
 
 ```{r}
@@ -56,7 +61,8 @@ FinalData <- inner_join(Soldierdata_long, Murderdata_long, by = c("country", "ye
 FinalData |>
   slice_head(n = 5) 
 ```
-After done cleaning the data, the dataframe spans from the years 1990 to 2016. We did these years because the other years did not include any values and both data sets had to include an observation. Missing values were addressed by removing them from our point of focus, ensuring that all available data points were retained. The country was only included if we had data from our two test variables from the year 1990 to 2016. The solider data had 172 observations and crime rata data had 118 observations. After doing our data cleaning we had a final dataset of 85 country observations. An observation is consisted with the country, murder rate, and solider rate.
+
+After done cleaning the data, the dataframe spans from the years 1990 to 2016. We did these years because the other years did not include any values and both data sets had to include an observation. Missing values were addressed by removing them from our point of focus, ensuring that all available data points were retained. The country was only included if we had data from our two test variables from the year 1990 to 2016. The solider data had 172 observations and crime rate data had 118 observations. After doing our data cleaning we had a final dataset of 85 country observations. An observation is consisted with the country, murder rate, and solider rate.
 
 ## Linear Regression
 
@@ -76,7 +82,8 @@ ggplot(data = summary_data, aes(x = avg_soldiers, y = log(avg_murder_rate))) +
        y = "Murder Rate (per 100,000 people)")
 
 ```
-The dat was was first aggregated so that the country observations were taking an average across the years. After, a log transformation was done the y variable of murder rate in order to create a linear regression and try to create an equal variance with our residuals.
+
+The data was first aggregated so that the country observations were taking an average across the years. After, a log transformation was done the y variable of murder rate in order to create a linear regression and try to create an equal variance with our residuals.
 
 As seen on the scatter plot, the distribution is focused towards the **bottom left** of the graph **(under x = 10 and y = 25)**. This indicates that most countries have a relatively **small percentage of military** personnel in their labor force. However, among those countries, there is a wide variation in murder rates, with some exceeding **25 per 100,000 people**.
 
@@ -183,6 +190,8 @@ ggplot() +
 
 ```
 
+In the model above, it shows the original observed data in blue and and simulated data in red. The simulated data has gone through the same transformation as the observed data. Military Personal is on the x-axis and murder rate is on the y-axis. The simulated and observed data both cluster at low military percentages. The observed data has more variation in murder rates. The simulated data stays mostly near zero and misses the extreme values. Overall, the simulated data seems to be fairly similar to the observed data.
+
 ```{r}
 #adding an id so we can run regression on specific simulations
 Thousand_Simulated_id <- Thousand_Simulated |>
@@ -207,8 +216,11 @@ r_squared_data <- data.frame(r_squared_values = r_squared_values)
 
 ggplot(r_squared_data, aes(x = r_squared_values)) +
   geom_histogram(binwidth = 0.005, fill = "darkred", alpha = 0.5, color = "black") +
+  geom_vline(xintercept = 0.0129, color = "blue", linetype = "dotted", size = 1) +
   labs(title = "Simulated R^2",
        x = "R^2",
        y = "Frequency") +
   theme_bw()
 ```
+
+In the plot above, it shows the distribution of simulated R² values from the model. The blue dotted line represents the observed R² from the actual data. Most of the simulated R² values are clustered near zero, showing that the model explains very little of the variation. Overall, the observed R² is slightly higher than most of the simulated values, but the model still does not do a good job predicting murder rates. This suggests that military personnel alone is not a strong predictor of murder rates and other factors are likely more important.
