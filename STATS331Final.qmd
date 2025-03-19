@@ -54,8 +54,9 @@ FinalData <- inner_join(Soldierdata_long, Murderdata_long, by = c("country", "ye
 
 
 FinalData |>
-  slice_head(n = 5)
+  slice_head(n = 5) 
 ```
+After done cleaning the data, the dataframe spans from the years 1990 to 2016. We did these years because the other years did not include any values and both data sets had to include an observation. Missing values were addressed by removing them from our point of focus, ensuring that all available data points were retained. The country was only included if we had data from our two test variables from the year 1990 to 2016. The solider data had 172 observations and crime rata data had 118 observations. After doing our data cleaning we had a final dataset of 85 country observations. An observation is consisted with the country, murder rate, and solider rate.
 
 ## Linear Regression
 
@@ -67,15 +68,15 @@ summary_data <- FinalData |>
     avg_murder_rate = mean(murder_rate, na.rm = TRUE)) 
 
 
-
 ggplot(data = summary_data, aes(x = avg_soldiers, y = log(avg_murder_rate))) +
   geom_point(alpha = 0.5) +
   geom_smooth(method = "lm", se = FALSE, color = "red") +
-  labs(title = "Military Personnel vs. Murder Rate",
+  labs(title = "Average Military Personnel vs. Average Murder Rate Across Countries",
        x = "Military Personnel (% of Labor Force)",
        y = "Murder Rate (per 100,000 people)")
 
 ```
+The dat was was first aggregated so that the country observations were taking an average across the years. After, a log transformation was done the y variable of murder rate in order to create a linear regression and try to create an equal variance with our residuals.
 
 As seen on the scatter plot, the distribution is focused towards the **bottom left** of the graph **(under x = 10 and y = 25)**. This indicates that most countries have a relatively **small percentage of military** personnel in their labor force. However, among those countries, there is a wide variation in murder rates, with some exceeding **25 per 100,000 people**.
 
@@ -139,11 +140,11 @@ r_squared <- variance_fitted / variance_response
 r_squared
 ```
 
-The R-squared value or the fitted variance divided by the response of variance is 0.0324. This shows that only 3.24% of the variation in murder rates is explained by the percentage of armed forces personnel in the labor force. This very low value suggests that military employment has little to no meaningful impact on murder rates, at least alone in the regression model. Most of the variability, 96.76%, is due to other factors that are not included in the model. Because crime rates are typically influenced by a mix of socioeconomic, demographic, and policy-related variables, relying on military employment as a predictor is unlikely to provide a strong explanatory factor.
+The R-squared value or the fitted variance divided by the response of variance is 0.0129. This shows that only 1.29% of the variation in murder rates is explained by the percentage of armed forces personnel in the labor force. This very low value suggests that military employment has little to no meaningful impact on murder rates, at least alone in the regression model. Most of the variability, 96.76%, is due to other factors that are not included in the model. Because crime rates are typically influenced by a mix of socioeconomic, demographic, and policy-related variables, relying on military employment as a predictor is unlikely to provide a strong explanatory factor.
 
 To improve the model, we would need to add additional predictors that are more directly linked to crime rates. Factors such as unemployment, poverty levels, education, and law enforcement policies could offer greater variance into the drivers of violent crime. Given the weak variance of the current model, a broader approach that includes multiple predictors would likely provide a more accurate and comprehensive understanding of what influences murder rates.
 
-Simulation
+## Simulation
 
 ```{r}
 
