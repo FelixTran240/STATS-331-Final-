@@ -1,5 +1,5 @@
 ---
-title: "STATS331Final Q"
+title: "Armed and Dangerous? A Global Analysis of Military Size and Murder Rates"
 subtitle: "Final Project"
 author: "Ricky Murillo, Felix tran, Nathan Madlansacay, Jacob Hinshaw"
 format: 
@@ -23,6 +23,10 @@ library(tidyverse)
 library(ggplot2)
 set.seed(1)
 ```
+
+# Introduction
+
+There has been a large case of murders around the country that has affected mankind. A large reason people decide to move or travel to locations is based on murder rates at that specific location. One way that country's try to decrease the murder rate is by employing personal to help like police and military. The military deals with more issues in the foreign countries. However, in the this project we will see how murder rate and military personal are correlated.
 
 ## Dataset
 
@@ -232,3 +236,13 @@ ggplot(r_squared_data, aes(x = r_squared_values)) +
 ```
 
 In the plot above, it shows the distribution of simulated R² values from the model. The blue dotted line represents the observed R² from the actual data. Most of the simulated R² values are clustered near zero, showing that the model explains very little of the variation. Overall, the observed R² is slightly higher than most of the simulated values, but the model still does not do a good job predicting murder rates. This suggests that military personnel alone is not a strong predictor of murder rates and other factors are likely more important.
+
+## Conclusion
+
+Upon exploring the data, there is strong statistical evidence that higher military personnel percentages do not correlate with higher murder rates. Our linear model, tested at a 0.05 significance level, produced a p-value of 0.302, indicating no statistically significant relationship between military personnel as a percentage of the labor force and murder rates.
+
+Further supporting this, the R² value of 0.0129 shows that only 1.29% of the variation in murder rates is explained by military personnel levels, suggesting little to no predictive power. The R² simulation plot confirms this, as most simulated R² values cluster near zero, reinforcing that our model performs no better than random chance.
+
+Additionally, the model visualization comparing observed (blue) and simulated (red) data shows that while both datasets cluster at low military percentages, the observed data exhibits much more variation, including extreme values. The simulated data, however, remains near zero, missing these extremes—further demonstrating the model's limitations.
+
+Given that crime rates are typically influenced by socioeconomic, demographic, and policy-related factors, military employment alone is not a strong predictor. To improve the model, incorporating additional variables such as unemployment, poverty levels, education, and law enforcement policies would likely provide a more accurate and comprehensive understanding of what drives murder rates globally.
