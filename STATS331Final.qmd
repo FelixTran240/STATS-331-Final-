@@ -1,7 +1,7 @@
 ---
 title: "Armed and Dangerous? A Global Analysis of Military Size and Murder Rates"
 subtitle: "Final Project"
-author: "Ricky Murillo, Felix tran, Nathan Madlansacay, Jacob Hinshaw"
+author: "Ricky Murillo, Felix Tran, Nathan Madlansacay, Jacob Hinshaw"
 format: 
   html:
     embed-resources: true
